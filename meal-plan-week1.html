@@ -1,0 +1,2493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meal Plan — V & P</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F0E8;
+  --surface: #FDFAF4;
+  --surface2: #F0EBE0;
+  --ink: #1A1814;
+  --ink-muted: #7A7268;
+  --ink-light: #B8B0A4;
+  --accent: #C0622A;
+  --accent-light: #F2E8DF;
+  --green: #3A6349;
+  --green-light: #E8F0EB;
+  --rose: #A84F62;
+  --rose-light: #F5EBEe;
+  --border: #E2DAD0;
+  --sidebar-w: 220px;
+  --header-h: 64px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+}
+
+/* ─── TOP HEADER ─── */
+.top-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--header-h);
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  z-index: 200;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: #F5F0E8;
+  letter-spacing: -0.02em;
+}
+
+.brand em { font-style: italic; color: #D4813E; }
+
+.plan-selector-wrap {
+  position: relative;
+}
+
+.plan-selector {
+  appearance: none;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #F5F0E8;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 7px 32px 7px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.plan-selector:hover { background: rgba(255,255,255,0.12); }
+.plan-selector option { background: #1A1814; }
+
+.plan-selector-wrap::after {
+  content: '▾';
+  position: absolute;
+  right: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #D4813E;
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+}
+
+.badge-v { background: var(--green); color: white; }
+.badge-p { background: var(--rose); color: white; }
+
+.badge-label { font-size: 11px; color: rgba(245,240,232,0.5); }
+
+/* ─── LAYOUT ─── */
+.layout {
+  display: flex;
+  padding-top: var(--header-h);
+  min-height: 100vh;
+}
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  position: fixed;
+  top: var(--header-h);
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-section-label {
+  padding: 24px 24px 10px;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  font-weight: 500;
+}
+
+.day-nav {
+  list-style: none;
+  padding: 0 12px;
+}
+
+.day-nav-item {
+  margin-bottom: 2px;
+}
+
+.day-nav-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.18s;
+  text-align: left;
+}
+
+.day-nav-btn:hover { background: var(--surface2); }
+
+.day-nav-btn.active {
+  background: var(--ink);
+}
+
+.day-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-light);
+  width: 20px;
+  transition: color 0.18s;
+}
+
+.day-nav-btn.active .day-num { color: rgba(245,240,232,0.4); }
+
+.day-name {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink);
+  transition: color 0.18s;
+}
+
+.day-nav-btn.active .day-name { color: var(--bg); }
+
+.day-tag {
+  font-size: 10px;
+  color: var(--ink-light);
+  display: block;
+  margin-top: 1px;
+}
+
+.day-nav-btn.active .day-tag { color: rgba(245,240,232,0.4); }
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 12px 24px;
+}
+
+.sidebar-extra {
+  list-style: none;
+  padding: 0 12px;
+}
+
+.sidebar-extra-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--ink-muted);
+  transition: all 0.18s;
+  text-align: left;
+  margin-bottom: 2px;
+}
+
+.sidebar-extra-btn:hover { background: var(--surface2); color: var(--ink); }
+.sidebar-extra-btn.active { background: var(--green); color: white; }
+.sidebar-extra-btn.active.grocery { background: var(--accent); }
+.sidebar-extra-btn.active.prep { background: #5A7A3A; color: white; }
+.sidebar-extra-btn.active.glance { background: var(--ink); color: var(--bg); }
+
+.sidebar-icon { font-size: 14px; width: 18px; text-align: center; }
+
+/* ─── MAIN CONTENT ─── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  padding: 48px 56px 80px;
+  max-width: calc(820px + var(--sidebar-w));
+}
+
+/* ─── PANELS ─── */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ─── DAY HEADER ─── */
+.day-hero {
+  margin-bottom: 40px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.day-hero-left {}
+
+.day-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.day-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 5vw, 54px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.day-title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.day-subtitle {
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin-top: 8px;
+  letter-spacing: 0.02em;
+}
+
+.day-macro-strip {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.macro-item {
+  text-align: right;
+}
+
+.macro-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--ink);
+  display: block;
+  line-height: 1;
+}
+
+.macro-lbl {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  margin-top: 3px;
+  display: block;
+}
+
+/* ─── MEAL CARDS ─── */
+.meals-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.meal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.meal-card:hover {
+  box-shadow: 0 4px 24px rgba(26,24,20,0.08);
+}
+
+/* meal card header */
+.meal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.meal-type-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.meal-type-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.meal-type-icon.breakfast { background: #FEF5E4; }
+.meal-type-icon.lunch { background: var(--green-light); }
+.meal-type-icon.dinner { background: #F3EAED; }
+
+.meal-type-label {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  display: block;
+}
+
+.meal-type-label.breakfast { color: #B07A28; }
+.meal-type-label.lunch { color: var(--green); }
+.meal-type-label.dinner { color: var(--rose); }
+
+.meal-type-sub {
+  font-size: 11px;
+  color: var(--ink-light);
+  display: block;
+  margin-top: 1px;
+}
+
+.meal-time-badge {
+  font-size: 11px;
+  color: var(--ink-muted);
+  background: var(--surface2);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 400;
+}
+
+.updated-pip {
+  background: var(--green);
+  color: white;
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+
+/* meal card body */
+.meal-body {
+  padding: 22px 24px 24px;
+}
+
+.meal-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.25;
+  margin-bottom: 20px;
+  letter-spacing: -0.01em;
+}
+
+.meal-name .overlap-tag {
+  display: inline-block;
+  background: #F0E8D8;
+  color: #9A7040;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  margin-left: 6px;
+  font-weight: 500;
+}
+
+/* portions row */
+.portions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.portion-card {
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.portion-card.v { background: var(--green-light); }
+.portion-card.p { background: #F9F0F3; }
+
+.portion-person-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.portion-person-label.v { color: var(--green); }
+.portion-person-label.p { color: var(--rose); }
+
+.person-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.v .person-dot { background: var(--green); }
+.p .person-dot { background: var(--rose); }
+
+.portion-items { margin-bottom: 10px; }
+
+.portion-line {
+  font-size: 13px;
+  color: var(--ink);
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.portion-line:last-child { border-bottom: none; }
+
+.portion-line-name { flex: 1; }
+
+.portion-line-qty {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* macro pills */
+.macro-pills {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.mpill {
+  font-size: 10.5px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 20px;
+}
+
+.mpill-cal { background: #FFF0E0; color: #C06020; }
+.mpill-pro { background: #E4F2E8; color: #2A6838; }
+.mpill-fib { background: #EEE8F8; color: #5A3C9A; }
+
+/* p addon */
+.p-addon {
+  background: #F8EFF2;
+  border-left: 3px solid var(--rose);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  color: var(--ink);
+  margin-top: 4px;
+}
+
+.p-addon strong { color: var(--rose); font-weight: 500; }
+
+/* cook note */
+.cook-note {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* ─── SNACKS PANEL ─── */
+.section-hero {
+  margin-bottom: 36px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 40px;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.section-title em { font-style: italic; color: var(--accent); }
+
+.section-desc {
+  font-size: 14px;
+  color: var(--ink-muted);
+  margin-top: 8px;
+}
+
+.snacks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.snack-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px;
+  transition: box-shadow 0.2s;
+}
+
+.snack-card:hover { box-shadow: 0 4px 20px rgba(26,24,20,0.07); }
+
+.snack-type-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.snack-type-label.salty { color: var(--green); }
+.snack-type-label.sweet { color: var(--rose); }
+
+.snack-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 14px;
+  line-height: 1.3;
+}
+
+.snack-body { font-size: 13px; line-height: 1.8; color: var(--ink); }
+.snack-body .sv { color: var(--green); font-weight: 500; }
+.snack-body .sp { color: var(--rose); font-weight: 500; }
+
+.snack-prep {
+  margin-top: 12px;
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  font-style: italic;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+
+/* prep checklist */
+.prep-box {
+  background: #FBF6EC;
+  border: 1px solid #E8D9B8;
+  border-radius: 10px;
+  padding: 24px 28px;
+}
+
+.prep-box-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.prep-list { list-style: none; }
+
+.prep-list li {
+  font-size: 13px;
+  padding: 7px 0;
+  border-bottom: 1px dashed #E0CCA8;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  line-height: 1.5;
+}
+
+.prep-list li:last-child { border-bottom: none; }
+
+.prep-arrow { color: var(--accent); flex-shrink: 0; }
+
+/* ─── GROCERY PANEL ─── */
+.grocery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.grocery-cat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.grocery-cat-title {
+  padding: 12px 18px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+
+.grocery-cat-title.grains { background: #FDF6EC; color: #8B5A1A; }
+.grocery-cat-title.proteins { background: #EDF5F0; color: var(--green); }
+.grocery-cat-title.veggies { background: #EFF8F2; color: #1E6040; }
+.grocery-cat-title.dairy { background: #F2EDF8; color: #5A3A8A; }
+.grocery-cat-title.fruits { background: #F8EEF1; color: var(--rose); }
+.grocery-cat-title.pantry { background: #FBF5E8; color: #8B6020; }
+
+.grocery-items { padding: 10px 18px; }
+
+.grocery-row {
+  font-size: 13px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.grocery-row:last-child { border-bottom: none; }
+.grocery-qty { font-size: 11px; color: var(--ink-muted); }
+
+/* nutrition summary */
+.nutrition-box {
+  background: var(--ink);
+  color: var(--bg);
+  border-radius: 10px;
+  padding: 28px 32px;
+}
+
+.nutrition-box-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: #D4813E;
+  margin-bottom: 20px;
+}
+
+.nutrition-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.nutrition-col h4 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.nutrition-col.vn h4 { color: #7FC99A; }
+.nutrition-col.pn h4 { color: #E895AC; }
+
+.nutrition-row-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  color: rgba(245,240,232,0.7);
+}
+
+.nutrition-row-item strong { color: var(--bg); font-weight: 400; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 760px) {
+  :root { --sidebar-w: 0px; }
+
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    margin-left: 0;
+    padding: 24px 20px 60px;
+  }
+
+  .top-bar { padding: 0 20px; }
+
+  .portions-row { grid-template-columns: 1fr; }
+
+  .nutrition-cols { grid-template-columns: 1fr; }
+}
+
+/* ─── WEEK GLANCE TABLE ─── */
+.glance-hero {
+  margin-bottom: 36px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.glance-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.glance-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 40px;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.glance-title em { font-style: italic; color: var(--accent); }
+
+.glance-desc {
+  font-size: 14px;
+  color: var(--ink-muted);
+  margin-top: 8px;
+}
+
+.glance-table-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.glance-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  font-size: 13px;
+}
+
+.glance-table thead tr {
+  background: var(--ink);
+}
+
+.glance-table thead th {
+  padding: 14px 20px;
+  text-align: left;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgba(245,240,232,0.7);
+}
+
+.glance-table thead th:first-child {
+  width: 110px;
+  color: rgba(245,240,232,0.4);
+}
+
+.glance-table thead th.col-b { color: #D4A843; }
+.glance-table thead th.col-l { color: #7FC99A; }
+.glance-table thead th.col-d { color: #E895AC; }
+
+.glance-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.glance-table tbody tr:last-child { border-bottom: none; }
+
+.glance-table tbody tr:hover { background: var(--surface2); cursor: pointer; }
+
+.glance-table td {
+  padding: 16px 20px;
+  vertical-align: top;
+}
+
+.glance-day-cell {
+  white-space: nowrap;
+}
+
+.glance-day-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 11px;
+  color: var(--ink-light);
+  display: block;
+}
+
+.glance-day-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  display: block;
+  margin-top: 1px;
+}
+
+.glance-meal-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.35;
+  margin-bottom: 5px;
+}
+
+.glance-person-line {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  line-height: 1.6;
+  display: flex;
+  gap: 5px;
+  align-items: baseline;
+}
+
+.glance-v { color: var(--green); font-weight: 500; font-size: 10px; letter-spacing: 0.05em; }
+.glance-p { color: var(--rose); font-weight: 500; font-size: 10px; letter-spacing: 0.05em; }
+
+.glance-time {
+  display: inline-block;
+  font-size: 10px;
+  color: var(--ink-light);
+  background: var(--surface2);
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-top: 6px;
+}
+
+/* ─── PREP PANEL ─── */
+.prep-panel-box {
+  background: #FBF6EC;
+  border: 1px solid #E8D9B8;
+  border-radius: 10px;
+  padding: 28px 32px;
+}
+
+.prep-panel-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 40px;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.prep-panel-title em { font-style: italic; color: var(--accent); }
+
+.prep-panel-desc {
+  font-size: 14px;
+  color: var(--ink-muted);
+  margin-bottom: 28px;
+}
+
+.prep-panel-inner-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+/* ─── FADE IN ─── */
+.panel.active {
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="top-bar">
+  <div class="top-bar-left">
+    <div class="brand">Eat Well, <em>Live Better.</em></div>
+    <div class="plan-selector-wrap">
+      <select class="plan-selector" onchange="switchPlan(this.value)">
+        <option value="A">Plan A — Week 1</option>
+        <option value="B" disabled>Plan B — Week 2 (coming soon)</option>
+        <option value="C" disabled>Plan C — Week 3 (coming soon)</option>
+      </select>
+    </div>
+  </div>
+  <div class="top-bar-right">
+    <div class="profile-badge">
+      <span class="badge badge-v">V</span>
+      <span class="badge-label">84→75 kg · Veg · ~1,750 kcal</span>
+    </div>
+    <div class="profile-badge">
+      <span class="badge badge-p">P</span>
+      <span class="badge-label">69→62 kg · Non-Veg · ~1,550 kcal</span>
+    </div>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <ul class="sidebar-extra" style="padding: 12px 12px 0;">
+      <li>
+        <button class="sidebar-extra-btn glance" onclick="showPanel('glance', this)" style="background: var(--ink); color: var(--bg); font-weight: 500;">
+          <span class="sidebar-icon">📅</span> Week at a Glance
+        </button>
+      </li>
+    </ul>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">Days</div>
+    <ul class="day-nav">
+      <li class="day-nav-item">
+        <button class="day-nav-btn active" onclick="showPanel('day1', this)">
+          <span class="day-num">01</span>
+          <div>
+            <span class="day-name">Monday</span>
+            <span class="day-tag">Ragi Dosa</span>
+          </div>
+        </button>
+      </li>
+      <li class="day-nav-item">
+        <button class="day-nav-btn" onclick="showPanel('day2', this)">
+          <span class="day-num">02</span>
+          <div>
+            <span class="day-name">Tuesday</span>
+            <span class="day-tag">Moong Chilla</span>
+          </div>
+        </button>
+      </li>
+      <li class="day-nav-item">
+        <button class="day-nav-btn" onclick="showPanel('day3', this)">
+          <span class="day-num">03</span>
+          <div>
+            <span class="day-name">Wednesday</span>
+            <span class="day-tag">Idiyappam</span>
+          </div>
+        </button>
+      </li>
+      <li class="day-nav-item">
+        <button class="day-nav-btn" onclick="showPanel('day4', this)">
+          <span class="day-num">04</span>
+          <div>
+            <span class="day-name">Thursday</span>
+            <span class="day-tag">Palak Dal</span>
+          </div>
+        </button>
+      </li>
+      <li class="day-nav-item">
+        <button class="day-nav-btn" onclick="showPanel('day5', this)">
+          <span class="day-num">05</span>
+          <div>
+            <span class="day-name">Friday</span>
+            <span class="day-tag">Pasta Night</span>
+          </div>
+        </button>
+      </li>
+      <li class="day-nav-item">
+        <button class="day-nav-btn" onclick="showPanel('day6', this)">
+          <span class="day-num">06</span>
+          <div>
+            <span class="day-name">Saturday</span>
+            <span class="day-tag">Bhurji + Chana</span>
+          </div>
+        </button>
+      </li>
+      <li class="day-nav-item">
+        <button class="day-nav-btn" onclick="showPanel('day7', this)">
+          <span class="day-num">07</span>
+          <div>
+            <span class="day-name">Sunday</span>
+            <span class="day-tag">Overnight Oats</span>
+          </div>
+        </button>
+      </li>
+    </ul>
+    <div class="sidebar-divider"></div>
+    <ul class="sidebar-extra">
+      <li>
+        <button class="sidebar-extra-btn" onclick="showPanel('snacks', this)">
+          <span class="sidebar-icon">🌿</span> Snacks
+        </button>
+      </li>
+      <li>
+        <button class="sidebar-extra-btn grocery" onclick="showPanel('grocery', this)">
+          <span class="sidebar-icon">🛒</span> Grocery List
+        </button>
+      </li>
+      <li>
+        <button class="sidebar-extra-btn prep" onclick="showPanel('prep', this)">
+          <span class="sidebar-icon">✅</span> Prep Checklist
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ===== DAY 1 ===== -->
+    <div class="panel active" id="day1">
+      <div class="day-hero">
+        <div class="day-hero-left">
+          <div class="day-eyebrow">Day 01 · South Indian</div>
+          <h1 class="day-title">Mon<em>day.</em></h1>
+          <div class="day-subtitle">Ragi Dosa · Cook's Day · Rajma Leftover Dinner</div>
+        </div>
+        <div class="day-macro-strip">
+          <div class="macro-item"><span class="macro-val">~1,750</span><span class="macro-lbl">V kcal</span></div>
+          <div class="macro-item"><span class="macro-val">~1,550</span><span class="macro-lbl">P kcal</span></div>
+        </div>
+      </div>
+      <div class="meals-column">
+
+        <!-- B -->
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon breakfast">☀️</div>
+              <div>
+                <span class="meal-type-label breakfast">Breakfast</span>
+                <span class="meal-type-sub">High Protein · High Fibre</span>
+              </div>
+            </div>
+            <span class="meal-time-badge">Cook prepares</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Ragi (Finger Millet) Dosa with Sambar & Coconut Chutney</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V — Vegetarian</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Ragi Dosa</span><span class="portion-line-qty">3 medium (90g batter)</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Sambar</span><span class="portion-line-qty">1 cup (200ml)</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Coconut Chutney</span><span class="portion-line-qty">2 tbsp</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~420 kcal</span>
+                  <span class="mpill mpill-pro">18g protein</span>
+                  <span class="mpill mpill-fib">9g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P — Non-Veg</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Ragi Dosa</span><span class="portion-line-qty">2 medium (60g batter)</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Sambar</span><span class="portion-line-qty">¾ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Coconut Chutney</span><span class="portion-line-qty">1 tbsp</span></div>
+                  <div class="portion-line"><span class="portion-line-name">2 Boiled Eggs</span><span class="portion-line-qty">on the side</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~390 kcal</span>
+                  <span class="mpill mpill-pro">26g protein</span>
+                  <span class="mpill mpill-fib">7g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="cook-note">Ragi batter prepped in bulk on Sunday. Sambar base reused on Friday — cook makes one big batch.</div>
+          </div>
+        </div>
+
+        <!-- L -->
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon lunch">🌿</div>
+              <div>
+                <span class="meal-type-label lunch">Lunch</span>
+                <span class="meal-type-sub">Cook-Prepared</span>
+              </div>
+            </div>
+            <span class="meal-time-badge">Cook prepares</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Brown Rice + Rajma Masala + Cucumber-Tomato Salad</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Brown Rice</span><span class="portion-line-qty">¾ cup cooked (135g)</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Rajma Masala</span><span class="portion-line-qty">1 cup (180g)</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Cucumber-Tomato Salad</span><span class="portion-line-qty">1 cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~510 kcal</span>
+                  <span class="mpill mpill-pro">22g protein</span>
+                  <span class="mpill mpill-fib">12g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Brown Rice</span><span class="portion-line-qty">½ cup cooked (90g)</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Rajma Masala</span><span class="portion-line-qty">¾ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Salad</span><span class="portion-line-qty">1 cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~420 kcal</span>
+                  <span class="mpill mpill-pro">18g protein</span>
+                  <span class="mpill mpill-fib">10g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-addon"><strong>P Add-on:</strong> 100g grilled chicken breast (weekend-prepped) → +30g protein</div>
+          </div>
+        </div>
+
+        <!-- D -->
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon dinner">🌙</div>
+              <div>
+                <span class="meal-type-label dinner">Dinner</span>
+                <span class="meal-type-sub">No Rice · Leftover Friendly</span>
+              </div>
+            </div>
+            <span class="meal-time-badge">⏱ 15 min</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Multigrain Roti + Leftover Rajma + Cucumber Raita <span class="overlap-tag">↺ Rajma</span></div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Multigrain Roti</span><span class="portion-line-qty">2 nos</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Leftover Rajma Masala</span><span class="portion-line-qty">½ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Cucumber Raita</span><span class="portion-line-qty">½ cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~380 kcal</span>
+                  <span class="mpill mpill-pro">17g protein</span>
+                  <span class="mpill mpill-fib">9g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Multigrain Roti</span><span class="portion-line-qty">1.5 nos</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Leftover Rajma</span><span class="portion-line-qty">⅓ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Cucumber Raita</span><span class="portion-line-qty">½ cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~320 kcal</span>
+                  <span class="mpill mpill-pro">14g protein</span>
+                  <span class="mpill mpill-fib">7g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="cook-note">Warm rotis on tawa, reheat rajma, whisk curd with grated cucumber + cumin. No rice at dinner.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== DAY 2 ===== -->
+    <div class="panel" id="day2">
+      <div class="day-hero">
+        <div class="day-hero-left">
+          <div class="day-eyebrow">Day 02 · Indian + Continental</div>
+          <h1 class="day-title">Tues<em>day.</em></h1>
+          <div class="day-subtitle">Moong Dal Chilla · Brown Rice (V) / Quinoa (P) · Avocado Toast</div>
+        </div>
+      </div>
+      <div class="meals-column">
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon breakfast">☀️</div>
+              <div><span class="meal-type-label breakfast">Breakfast</span><span class="meal-type-sub">High Protein · High Fibre</span></div>
+            </div>
+            <span class="meal-time-badge">Cook prepares</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Moong Dal Chilla with Paneer / Egg-White Filling & Mint Chutney</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Moong Dal Chilla</span><span class="portion-line-qty">3 nos (120g batter)</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Low-fat paneer filling</span><span class="portion-line-qty">40g</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Mint chutney</span><span class="portion-line-qty">2 tbsp</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~430 kcal</span>
+                  <span class="mpill mpill-pro">28g protein</span>
+                  <span class="mpill mpill-fib">10g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Moong Dal Chilla</span><span class="portion-line-qty">2 nos (80g batter)</span></div>
+                  <div class="portion-line"><span class="portion-line-name">3 egg whites scrambled inside</span><span class="portion-line-qty"></span></div>
+                  <div class="portion-line"><span class="portion-line-name">Mint chutney</span><span class="portion-line-qty">1 tbsp</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~350 kcal</span>
+                  <span class="mpill mpill-pro">30g protein</span>
+                  <span class="mpill mpill-fib">8g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="cook-note">Soak moong dal overnight. Cook grinds fresh batter in the morning.</div>
+          </div>
+        </div>
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon lunch">🌿</div>
+              <div><span class="meal-type-label lunch">Lunch</span><span class="meal-type-sub">Cook-Prepared <span class="updated-pip">Updated</span></span></div>
+            </div>
+            <span class="meal-time-badge">Cook prepares</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Brown Rice (V) / Quinoa (P) + Dal Tadka + Stir-fried Methi</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V — Brown Rice</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Brown Rice</span><span class="portion-line-qty">¾ cup cooked</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Dal Tadka (arhar)</span><span class="portion-line-qty">1 cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Methi/Spinach stir-fry</span><span class="portion-line-qty">½ cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~490 kcal</span>
+                  <span class="mpill mpill-pro">22g protein</span>
+                  <span class="mpill mpill-fib">11g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P — Quinoa</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Quinoa</span><span class="portion-line-qty">½ cup cooked (80g)</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Dal Tadka</span><span class="portion-line-qty">¾ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Stir-fried greens</span><span class="portion-line-qty">½ cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~400 kcal</span>
+                  <span class="mpill mpill-pro">22g protein</span>
+                  <span class="mpill mpill-fib">10g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-addon"><strong>P Add-on:</strong> 80g pan-seared fish (surmai / pomfret) → +22g protein</div>
+          </div>
+        </div>
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon dinner">🌙</div>
+              <div><span class="meal-type-label dinner">Dinner</span><span class="meal-type-sub">No Rice · Continental</span></div>
+            </div>
+            <span class="meal-time-badge">⏱ 12 min</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Avocado Toast on Whole Wheat + Mixed Sprouts Salad <span class="overlap-tag">↺ Greens</span></div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Whole wheat bread</span><span class="portion-line-qty">2 slices</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Mashed avocado + lemon + chilli</span><span class="portion-line-qty">½ avocado</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Mixed sprouts salad</span><span class="portion-line-qty">1 cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~420 kcal</span>
+                  <span class="mpill mpill-pro">15g protein</span>
+                  <span class="mpill mpill-fib">12g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Whole wheat bread</span><span class="portion-line-qty">1 slice</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Mashed avocado</span><span class="portion-line-qty">½ avocado</span></div>
+                  <div class="portion-line"><span class="portion-line-name">1 poached egg on top</span><span class="portion-line-qty"></span></div>
+                  <div class="portion-line"><span class="portion-line-name">Sprouts salad</span><span class="portion-line-qty">¾ cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~360 kcal</span>
+                  <span class="mpill mpill-pro">18g protein</span>
+                  <span class="mpill mpill-fib">9g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="cook-note">Toast bread, mash avocado, dress sprouts. Weekend-prepped sprouts make this even faster.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== DAY 3 ===== -->
+    <div class="panel" id="day3">
+      <div class="day-hero">
+        <div class="day-hero-left">
+          <div class="day-eyebrow">Day 03 · South Indian</div>
+          <h1 class="day-title">Wednes<em>day.</em></h1>
+          <div class="day-subtitle">Idiyappam · Quinoa Khichdi · Pumpkin Soup Night</div>
+        </div>
+      </div>
+      <div class="meals-column">
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon breakfast">☀️</div>
+              <div><span class="meal-type-label breakfast">Breakfast</span><span class="meal-type-sub">High Protein · High Fibre</span></div>
+            </div>
+            <span class="meal-time-badge">Cook prepares</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Idiyappam with Vegetable Stew / Egg Curry & Coconut Milk</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Idiyappam</span><span class="portion-line-qty">3 nos</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Vegetable stew (coconut milk)</span><span class="portion-line-qty">¾ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Roasted peanuts</span><span class="portion-line-qty">30g on side</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~410 kcal</span>
+                  <span class="mpill mpill-pro">14g protein</span>
+                  <span class="mpill mpill-fib">7g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Idiyappam</span><span class="portion-line-qty">2 nos</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Egg curry (2 eggs)</span><span class="portion-line-qty">¾ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Coconut milk side</span><span class="portion-line-qty">¼ cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~380 kcal</span>
+                  <span class="mpill mpill-pro">22g protein</span>
+                  <span class="mpill mpill-fib">5g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="cook-note">Idiyappam dough prepped the night before. Veg stew and egg curry share the same coconut milk base.</div>
+          </div>
+        </div>
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon lunch">🌿</div>
+              <div><span class="meal-type-label lunch">Lunch</span><span class="meal-type-sub">Cook-Prepared</span></div>
+            </div>
+            <span class="meal-time-badge">Cook prepares</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Quinoa Khichdi with Moong Dal + Mixed Vegetable Raita</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Quinoa Khichdi</span><span class="portion-line-qty">1.5 cups cooked</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Mixed vegetable raita</span><span class="portion-line-qty">½ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Pickle</span><span class="portion-line-qty">1 tsp</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~500 kcal</span>
+                  <span class="mpill mpill-pro">25g protein</span>
+                  <span class="mpill mpill-fib">10g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Quinoa Khichdi</span><span class="portion-line-qty">1 cup cooked</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Mixed vegetable raita</span><span class="portion-line-qty">½ cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~390 kcal</span>
+                  <span class="mpill mpill-pro">18g protein</span>
+                  <span class="mpill mpill-fib">8g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-addon"><strong>P Add-on:</strong> 80g boiled/shredded chicken mixed into khichdi → +24g protein</div>
+          </div>
+        </div>
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon dinner">🌙</div>
+              <div><span class="meal-type-label dinner">Dinner</span><span class="meal-type-sub">Soup Night · No Rice <span class="updated-pip">Updated</span></span></div>
+            </div>
+            <span class="meal-time-badge">⏱ 15 min</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Roasted Pumpkin Soup + Whole Wheat Toast</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Pumpkin soup (roasted, blended)</span><span class="portion-line-qty">1.5 cups</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Whole wheat toast</span><span class="portion-line-qty">1 slice</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Pumpkin seeds garnish</span><span class="portion-line-qty">1 tbsp</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~300 kcal</span>
+                  <span class="mpill mpill-pro">8g protein</span>
+                  <span class="mpill mpill-fib">8g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Pumpkin soup</span><span class="portion-line-qty">1.5 cups</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Whole wheat toast</span><span class="portion-line-qty">1 slice</span></div>
+                  <div class="portion-line"><span class="portion-line-name">2 boiled eggs on side</span><span class="portion-line-qty"></span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~320 kcal</span>
+                  <span class="mpill mpill-pro">20g protein</span>
+                  <span class="mpill mpill-fib">7g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="cook-note">Roast pumpkin cubes in oven (or microwave 5 min), blend with stock + ginger + coconut milk. Batch and refrigerate — doubles as Thursday backup.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== DAY 4 ===== -->
+    <div class="panel" id="day4">
+      <div class="day-hero">
+        <div class="day-hero-left">
+          <div class="day-eyebrow">Day 04 · North Indian</div>
+          <h1 class="day-title">Thurs<em>day.</em></h1>
+          <div class="day-subtitle">Besan Chilla · Palak Dal + Snake Gourd · Millet Noodles</div>
+        </div>
+      </div>
+      <div class="meals-column">
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon breakfast">☀️</div>
+              <div><span class="meal-type-label breakfast">Breakfast</span><span class="meal-type-sub">High Protein · High Fibre</span></div>
+            </div>
+            <span class="meal-time-badge">Cook prepares</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Besan (Chickpea) Chilla with Spinach Filling & Curd</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Besan Chilla</span><span class="portion-line-qty">3 nos (100g besan)</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Spinach + onion filling</span><span class="portion-line-qty">½ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Low-fat curd</span><span class="portion-line-qty">½ cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~440 kcal</span>
+                  <span class="mpill mpill-pro">26g protein</span>
+                  <span class="mpill mpill-fib">11g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Besan Chilla</span><span class="portion-line-qty">2 nos (65g besan)</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Spinach filling</span><span class="portion-line-qty">½ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">1 scrambled egg on side</span><span class="portion-line-qty"></span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~370 kcal</span>
+                  <span class="mpill mpill-pro">24g protein</span>
+                  <span class="mpill mpill-fib">9g fibre</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon lunch">🌿</div>
+              <div><span class="meal-type-label lunch">Lunch</span><span class="meal-type-sub">Cook-Prepared <span class="updated-pip">Updated</span></span></div>
+            </div>
+            <span class="meal-time-badge">Cook prepares</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Multigrain Roti + Palak Dal + Snake Gourd Sabzi</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Multigrain Roti</span><span class="portion-line-qty">3 nos</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Palak Dal</span><span class="portion-line-qty">1 cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Snake Gourd sabzi</span><span class="portion-line-qty">½ cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~520 kcal</span>
+                  <span class="mpill mpill-pro">24g protein</span>
+                  <span class="mpill mpill-fib">12g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Multigrain Roti</span><span class="portion-line-qty">2 nos</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Palak Dal</span><span class="portion-line-qty">¾ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Snake Gourd sabzi</span><span class="portion-line-qty">½ cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~400 kcal</span>
+                  <span class="mpill mpill-pro">18g protein</span>
+                  <span class="mpill mpill-fib">10g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-addon"><strong>P Add-on:</strong> 80g grilled / tandoori chicken → +24g protein</div>
+            <div class="cook-note">Snake gourd works beautifully with a mustard-curry leaf tempering. Light, high in fibre.</div>
+          </div>
+        </div>
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon dinner">🌙</div>
+              <div><span class="meal-type-label dinner">Dinner</span><span class="meal-type-sub">Wok Night · No Rice</span></div>
+            </div>
+            <span class="meal-time-badge">⏱ 15 min</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Millet Noodles Stir-fry with Seasonal Vegetables</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Millet noodles (dry)</span><span class="portion-line-qty">80g</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Capsicum, cabbage, carrot, broccoli</span><span class="portion-line-qty">1.5 cups</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Soy + ginger + garlic + sesame sauce</span><span class="portion-line-qty">1.5 tbsp</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~420 kcal</span>
+                  <span class="mpill mpill-pro">14g protein</span>
+                  <span class="mpill mpill-fib">10g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Millet noodles</span><span class="portion-line-qty">60g dry</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Same stir-fry veggies</span><span class="portion-line-qty">1 cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">100g prawns or chicken strips</span><span class="portion-line-qty">tossed in</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~380 kcal</span>
+                  <span class="mpill mpill-pro">28g protein</span>
+                  <span class="mpill mpill-fib">8g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="cook-note">Boil noodles 7 min. Stir-fry veggies 5 min. Toss. P: add prawns/chicken in last 4 min.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== DAY 5 ===== -->
+    <div class="panel" id="day5">
+      <div class="day-hero">
+        <div class="day-hero-left">
+          <div class="day-eyebrow">Day 05 · South Indian + Continental</div>
+          <h1 class="day-title">Fri<em>day.</em></h1>
+          <div class="day-subtitle">Oats Upma · Sambar Rice + Beetroot Poriyal · Pasta Night</div>
+        </div>
+      </div>
+      <div class="meals-column">
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon breakfast">☀️</div>
+              <div><span class="meal-type-label breakfast">Breakfast</span><span class="meal-type-sub">High Protein · High Fibre</span></div>
+            </div>
+            <span class="meal-time-badge">Cook prepares</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Oats Upma with Mixed Vegetables + Eggs (P)</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Steel-cut oats upma</span><span class="portion-line-qty">1 cup dry oats</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Peas, carrot, beans</span><span class="portion-line-qty">½ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Curry leaves, mustard, cashews</span><span class="portion-line-qty">6 cashews</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~430 kcal</span>
+                  <span class="mpill mpill-pro">16g protein</span>
+                  <span class="mpill mpill-fib">10g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Oats Upma</span><span class="portion-line-qty">¾ cup dry oats</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Veggies</span><span class="portion-line-qty">½ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">2 boiled eggs on side</span><span class="portion-line-qty"></span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~390 kcal</span>
+                  <span class="mpill mpill-pro">24g protein</span>
+                  <span class="mpill mpill-fib">8g fibre</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon lunch">🌿</div>
+              <div><span class="meal-type-label lunch">Lunch</span><span class="meal-type-sub">Cook-Prepared</span></div>
+            </div>
+            <span class="meal-time-badge">Cook prepares</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Sambar Rice + Beetroot Poriyal + Roasted Papad</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Brown/Red rice</span><span class="portion-line-qty">¾ cup cooked</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Sambar (thick)</span><span class="portion-line-qty">1 cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Beetroot Poriyal</span><span class="portion-line-qty">½ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Roasted papad</span><span class="portion-line-qty">1 no.</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~500 kcal</span>
+                  <span class="mpill mpill-pro">20g protein</span>
+                  <span class="mpill mpill-fib">11g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Brown/Red rice</span><span class="portion-line-qty">½ cup cooked</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Sambar</span><span class="portion-line-qty">¾ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Beetroot Poriyal</span><span class="portion-line-qty">½ cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~390 kcal</span>
+                  <span class="mpill mpill-pro">16g protein</span>
+                  <span class="mpill mpill-fib">10g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-addon"><strong>P Add-on:</strong> 80g prawn masala / fish curry → +22g protein</div>
+            <div class="cook-note">Beetroot only as poriyal — cooked with mustard, curry leaves and fresh coconut.</div>
+          </div>
+        </div>
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon dinner">🌙</div>
+              <div><span class="meal-type-label dinner">Dinner</span><span class="meal-type-sub">Friday Treat · No Rice</span></div>
+            </div>
+            <span class="meal-time-badge">⏱ 20 min</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Whole Wheat Pasta — Roasted Tomato Sauce + Vegetables</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Whole wheat pasta</span><span class="portion-line-qty">60g dry</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Tomato + garlic + basil sauce</span><span class="portion-line-qty">½ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Zucchini + capsicum + spinach</span><span class="portion-line-qty">1 cup roasted</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Nutritional yeast</span><span class="portion-line-qty">1 tbsp</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~430 kcal</span>
+                  <span class="mpill mpill-pro">16g protein</span>
+                  <span class="mpill mpill-fib">11g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Whole wheat pasta</span><span class="portion-line-qty">50g dry</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Same tomato sauce</span><span class="portion-line-qty">½ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">100g grilled chicken strips</span><span class="portion-line-qty">tossed in</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Veggies</span><span class="portion-line-qty">1 cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~420 kcal</span>
+                  <span class="mpill mpill-pro">36g protein</span>
+                  <span class="mpill mpill-fib">9g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="cook-note">Boil pasta (12 min), sauté garlic + tomatoes (8 min), toss. P grills chicken in parallel. One pot, one pan.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== DAY 6 ===== -->
+    <div class="panel" id="day6">
+      <div class="day-hero">
+        <div class="day-hero-left">
+          <div class="day-eyebrow">Day 06 · Leisurely</div>
+          <h1 class="day-title">Satur<em>day.</em></h1>
+          <div class="day-subtitle">Bhurji Breakfast · Chana Masala · Tomato Soup + Wrap</div>
+        </div>
+      </div>
+      <div class="meals-column">
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon breakfast">☀️</div>
+              <div><span class="meal-type-label breakfast">Breakfast</span><span class="meal-type-sub">High Protein · High Fibre</span></div>
+            </div>
+            <span class="meal-time-badge">Cook prepares</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Paneer Bhurji / Egg Bhurji (P) on Whole Wheat Toast</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Paneer Bhurji</span><span class="portion-line-qty">100g paneer crumbled</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Onion + tomato + capsicum</span><span class="portion-line-qty">½ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Whole wheat toast</span><span class="portion-line-qty">2 slices</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~450 kcal</span>
+                  <span class="mpill mpill-pro">30g protein</span>
+                  <span class="mpill mpill-fib">6g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Egg Bhurji (3 eggs)</span><span class="portion-line-qty">same veggies base</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Whole wheat toast</span><span class="portion-line-qty">1 slice</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~380 kcal</span>
+                  <span class="mpill mpill-pro">26g protein</span>
+                  <span class="mpill mpill-fib">4g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="cook-note">Same spice base for both — V gets paneer, P gets eggs. Cook simultaneously in 2 pans.</div>
+          </div>
+        </div>
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon lunch">🌿</div>
+              <div><span class="meal-type-label lunch">Lunch</span><span class="meal-type-sub">Cook-Prepared</span></div>
+            </div>
+            <span class="meal-time-badge">Cook prepares</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Chana Masala + Jeera Brown Rice + Kachumber Salad</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Chana Masala</span><span class="portion-line-qty">1 cup (180g)</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Jeera Brown Rice</span><span class="portion-line-qty">¾ cup cooked</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Kachumber salad</span><span class="portion-line-qty">1 cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~530 kcal</span>
+                  <span class="mpill mpill-pro">24g protein</span>
+                  <span class="mpill mpill-fib">14g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Chana Masala</span><span class="portion-line-qty">¾ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Jeera Brown Rice</span><span class="portion-line-qty">½ cup cooked</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Kachumber</span><span class="portion-line-qty">1 cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~400 kcal</span>
+                  <span class="mpill mpill-pro">18g protein</span>
+                  <span class="mpill mpill-fib">11g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-addon"><strong>P Add-on:</strong> 80g chicken tikka / baked chicken → +24g protein</div>
+          </div>
+        </div>
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon dinner">🌙</div>
+              <div><span class="meal-type-label dinner">Dinner</span><span class="meal-type-sub">Soup + Wrap · No Rice <span class="updated-pip">Updated</span></span></div>
+            </div>
+            <span class="meal-time-badge">⏱ 15 min</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Homemade Tomato Soup + Chana Wrap in Multigrain Roti <span class="overlap-tag">↺ Chana</span></div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Tomato soup (homemade, no cream)</span><span class="portion-line-qty">1 cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Multigrain roti</span><span class="portion-line-qty">1.5 nos</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Leftover Chana + shredded cabbage</span><span class="portion-line-qty">wrap filling</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~390 kcal</span>
+                  <span class="mpill mpill-pro">16g protein</span>
+                  <span class="mpill mpill-fib">12g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Tomato soup</span><span class="portion-line-qty">1 cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Multigrain roti</span><span class="portion-line-qty">1 no.</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Leftover Chana + grilled chicken</span><span class="portion-line-qty">wrap filling</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~340 kcal</span>
+                  <span class="mpill mpill-pro">24g protein</span>
+                  <span class="mpill mpill-fib">9g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="cook-note">Blend leftover tomatoes with garlic + stock. Warm roti, fill with chana, wrap. Saturday done in 15 minutes.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== DAY 7 ===== -->
+    <div class="panel" id="day7">
+      <div class="day-hero">
+        <div class="day-hero-left">
+          <div class="day-eyebrow">Day 07 · Relaxed + Prep Day</div>
+          <h1 class="day-title">Sun<em>day.</em></h1>
+          <div class="day-subtitle">Overnight Oats · Mixed Dal + Bajra Roti · Broccoli Soup</div>
+        </div>
+      </div>
+      <div class="meals-column">
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon breakfast">☀️</div>
+              <div><span class="meal-type-label breakfast">Breakfast</span><span class="meal-type-sub">No Cook · High Protein · High Fibre</span></div>
+            </div>
+            <span class="meal-time-badge">Jar from Saturday night</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Overnight Oats with Banana, Chia Seeds & Nuts</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Rolled oats</span><span class="portion-line-qty">½ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Low-fat milk or soy milk</span><span class="portion-line-qty">¾ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Chia seeds</span><span class="portion-line-qty">1 tbsp</span></div>
+                  <div class="portion-line"><span class="portion-line-name">½ banana + 8 almonds + 4 walnuts</span><span class="portion-line-qty"></span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~440 kcal</span>
+                  <span class="mpill mpill-pro">18g protein</span>
+                  <span class="mpill mpill-fib">11g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Rolled oats</span><span class="portion-line-qty">⅓ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Low-fat milk</span><span class="portion-line-qty">½ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Greek yoghurt</span><span class="portion-line-qty">¼ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Chia seeds</span><span class="portion-line-qty">1 tbsp</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Berries or ½ banana</span><span class="portion-line-qty"></span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~380 kcal</span>
+                  <span class="mpill mpill-pro">20g protein</span>
+                  <span class="mpill mpill-fib">9g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="cook-note">Prep jars Saturday night. Zero cooking Sunday morning — top with fruit and eat.</div>
+          </div>
+        </div>
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon lunch">🌿</div>
+              <div><span class="meal-type-label lunch">Lunch</span><span class="meal-type-sub">Cook-Prepared · Sunday Special <span class="updated-pip">Updated</span></span></div>
+            </div>
+            <span class="meal-time-badge">Cook prepares</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Mixed Dal + Bajra Roti + Stir-fried Snake Gourd / Green Beans</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Mixed dal (chana + moong + masoor)</span><span class="portion-line-qty">1 cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Bajra roti</span><span class="portion-line-qty">2 nos</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Stir-fried snake gourd or green beans</span><span class="portion-line-qty">½ cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~510 kcal</span>
+                  <span class="mpill mpill-pro">26g protein</span>
+                  <span class="mpill mpill-fib">13g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Mixed dal</span><span class="portion-line-qty">¾ cup</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Bajra roti</span><span class="portion-line-qty">1.5 nos</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Stir-fried snake gourd / green beans</span><span class="portion-line-qty">½ cup</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~400 kcal</span>
+                  <span class="mpill mpill-pro">20g protein</span>
+                  <span class="mpill mpill-fib">11g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-addon"><strong>P Add-on:</strong> 100g mutton keema / chicken curry (Sunday special!) → +28g protein</div>
+            <div class="cook-note">Replaced boondi raita with a cooked vegetable side — lighter and just as satisfying.</div>
+          </div>
+        </div>
+
+        <div class="meal-card">
+          <div class="meal-header">
+            <div class="meal-type-info">
+              <div class="meal-type-icon dinner">🌙</div>
+              <div><span class="meal-type-label dinner">Dinner</span><span class="meal-type-sub">Soup Night · Light Wind-Down <span class="updated-pip">Updated</span></span></div>
+            </div>
+            <span class="meal-time-badge">⏱ 15 min</span>
+          </div>
+          <div class="meal-body">
+            <div class="meal-name">Creamy Broccoli Soup + Multigrain Roti / Whole Wheat Bread</div>
+            <div class="portions-row">
+              <div class="portion-card v">
+                <div class="portion-person-label v"><span class="person-dot"></span>V</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Broccoli soup (blended, no cream)</span><span class="portion-line-qty">1.5 cups</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Multigrain roti</span><span class="portion-line-qty">1.5 nos</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Roasted pumpkin seeds garnish</span><span class="portion-line-qty">1 tbsp</span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~350 kcal</span>
+                  <span class="mpill mpill-pro">12g protein</span>
+                  <span class="mpill mpill-fib">10g fibre</span>
+                </div>
+              </div>
+              <div class="portion-card p">
+                <div class="portion-person-label p"><span class="person-dot"></span>P</div>
+                <div class="portion-items">
+                  <div class="portion-line"><span class="portion-line-name">Broccoli soup</span><span class="portion-line-qty">1.5 cups</span></div>
+                  <div class="portion-line"><span class="portion-line-name">Whole wheat bread</span><span class="portion-line-qty">1 slice</span></div>
+                  <div class="portion-line"><span class="portion-line-name">2 boiled eggs on side</span><span class="portion-line-qty"></span></div>
+                </div>
+                <div class="macro-pills">
+                  <span class="mpill mpill-cal">~340 kcal</span>
+                  <span class="mpill mpill-pro">22g protein</span>
+                  <span class="mpill mpill-fib">9g fibre</span>
+                </div>
+              </div>
+            </div>
+            <div class="cook-note">Steam broccoli (5 min), blend with garlic + onion + stock + ladle of coconut milk. Creamy without any cream. Begin Sunday meal prep after dinner.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== SNACKS ===== -->
+    <div class="panel" id="snacks">
+      <div class="section-hero">
+        <div class="section-eyebrow">Weekend-Prepped</div>
+        <h2 class="section-title">Snacks & <em>Cravings.</em></h2>
+        <div class="section-desc">3 options — 2 salty, 1 sweet. Prep all on Sunday. Each hits 100–200 kcal per serve with 5–12g protein.</div>
+      </div>
+      <div class="snacks-grid">
+        <div class="snack-card">
+          <div class="snack-type-label salty">🧂 Salty Fix #1</div>
+          <div class="snack-title">Masala Roasted Makhana</div>
+          <div class="snack-body">
+            <span class="sv">V:</span> 30g (~1 large cup) — ~120 kcal, 4g protein<br>
+            <span class="sp">P:</span> 25g — ~100 kcal, 3g protein<br><br>
+            Toss in ½ tsp ghee, chaat masala, cumin, black pepper, pink salt. Roast at 180°C for 8–10 min. Cool completely before storing.
+          </div>
+          <div class="snack-prep">Batch roast 200g → stores 5–7 days in airtight jar.</div>
+        </div>
+        <div class="snack-card">
+          <div class="snack-type-label salty">🧂 Salty Fix #2</div>
+          <div class="snack-title">Sprouted Moong Chaat</div>
+          <div class="snack-body">
+            <span class="sv">V:</span> ¾ cup — ~150 kcal, 10g protein, 7g fibre<br>
+            <span class="sp">P:</span> ½ cup + 1 boiled egg — ~160 kcal, 14g protein<br><br>
+            Sprouted moong + chopped onion + tomato + coriander + chaat masala + lemon. Dress fresh per serve.
+          </div>
+          <div class="snack-prep">Soak Friday night → sprouted by Sunday. Store plain in fridge.</div>
+        </div>
+        <div class="snack-card">
+          <div class="snack-type-label sweet">🍫 Sweet Fix</div>
+          <div class="snack-title">Date & Nut Energy Balls</div>
+          <div class="snack-body">
+            <span class="sv">V:</span> 2 balls — ~160 kcal, 5g protein, 4g fibre<br>
+            <span class="sp">P:</span> 1–2 balls — ~80–160 kcal<br><br>
+            Blend 10 Medjool dates + 3 tbsp almond butter + 2 tbsp flaxseed + 1 tbsp unsweetened cocoa. Roll in desiccated coconut. Refrigerate 30 min.
+          </div>
+          <div class="snack-prep">Makes ~15 balls. Refrigerate up to 10 days. No baking, no added sugar.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GROCERY ===== -->
+    <div class="panel" id="grocery">
+      <div class="section-hero">
+        <div class="section-eyebrow" style="color: var(--accent);">Weekly Shopping</div>
+        <h2 class="section-title">Grocery <em>List.</em></h2>
+        <div class="section-desc">Maximum ingredient overlap — fewer items, less waste, one trip.</div>
+      </div>
+      <div class="grocery-grid">
+        <div class="grocery-cat">
+          <div class="grocery-cat-title grains">Grains & Millets</div>
+          <div class="grocery-items">
+            <div class="grocery-row">Brown / Red Rice <span class="grocery-qty">500g</span></div>
+            <div class="grocery-row">Ragi Flour <span class="grocery-qty">300g</span></div>
+            <div class="grocery-row">Bajra Flour <span class="grocery-qty">200g</span></div>
+            <div class="grocery-row">Multigrain Atta <span class="grocery-qty">500g</span></div>
+            <div class="grocery-row">Whole Wheat Bread <span class="grocery-qty">1 loaf</span></div>
+            <div class="grocery-row">Whole Wheat Pasta <span class="grocery-qty">250g</span></div>
+            <div class="grocery-row">Millet Noodles <span class="grocery-qty">200g</span></div>
+            <div class="grocery-row">Quinoa <span class="grocery-qty">300g</span></div>
+            <div class="grocery-row">Rolled Oats (steel-cut) <span class="grocery-qty">500g</span></div>
+            <div class="grocery-row">Rice Flour (Idiyappam) <span class="grocery-qty">200g</span></div>
+          </div>
+        </div>
+        <div class="grocery-cat">
+          <div class="grocery-cat-title proteins">Lentils & Protein</div>
+          <div class="grocery-items">
+            <div class="grocery-row">Rajma <span class="grocery-qty">300g</span></div>
+            <div class="grocery-row">Kabuli Chana <span class="grocery-qty">300g</span></div>
+            <div class="grocery-row">Arhar Dal <span class="grocery-qty">250g</span></div>
+            <div class="grocery-row">Moong Dal (split) <span class="grocery-qty">300g</span></div>
+            <div class="grocery-row">Masoor Dal <span class="grocery-qty">150g</span></div>
+            <div class="grocery-row">Besan <span class="grocery-qty">250g</span></div>
+            <div class="grocery-row">Paneer (low-fat) <span class="grocery-qty">300g</span></div>
+            <div class="grocery-row">Makhana (Fox Nuts) <span class="grocery-qty">200g</span></div>
+            <div class="grocery-row">Eggs (P) <span class="grocery-qty">12–14 nos</span></div>
+            <div class="grocery-row">Chicken Breast (P) <span class="grocery-qty">600g</span></div>
+            <div class="grocery-row">Fish / Prawns (P) <span class="grocery-qty">300g</span></div>
+            <div class="grocery-row">Almonds + Walnuts <span class="grocery-qty">100g each</span></div>
+            <div class="grocery-row">Roasted Peanuts <span class="grocery-qty">100g</span></div>
+          </div>
+        </div>
+        <div class="grocery-cat">
+          <div class="grocery-cat-title veggies">Vegetables</div>
+          <div class="grocery-items">
+            <div class="grocery-row">Spinach / Palak <span class="grocery-qty">300g</span></div>
+            <div class="grocery-row">Tomatoes <span class="grocery-qty">10–12</span></div>
+            <div class="grocery-row">Onions <span class="grocery-qty">6</span></div>
+            <div class="grocery-row">Capsicum (mixed) <span class="grocery-qty">4</span></div>
+            <div class="grocery-row">Broccoli <span class="grocery-qty">2 heads</span></div>
+            <div class="grocery-row">Pumpkin <span class="grocery-qty">400g</span></div>
+            <div class="grocery-row">Snake Gourd <span class="grocery-qty">2 medium</span></div>
+            <div class="grocery-row">Zucchini <span class="grocery-qty">2</span></div>
+            <div class="grocery-row">Beetroot <span class="grocery-qty">3</span></div>
+            <div class="grocery-row">Cucumber <span class="grocery-qty">4</span></div>
+            <div class="grocery-row">Carrots <span class="grocery-qty">4</span></div>
+            <div class="grocery-row">Cabbage <span class="grocery-qty">½ head</span></div>
+            <div class="grocery-row">Sweet Potato <span class="grocery-qty">2</span></div>
+            <div class="grocery-row">Peas (frozen) <span class="grocery-qty">200g</span></div>
+            <div class="grocery-row">Green Beans <span class="grocery-qty">150g</span></div>
+            <div class="grocery-row">Methi / Fenugreek <span class="grocery-qty">1 bunch</span></div>
+          </div>
+        </div>
+        <div class="grocery-cat">
+          <div class="grocery-cat-title dairy">Dairy & Curd</div>
+          <div class="grocery-items">
+            <div class="grocery-row">Low-fat Curd <span class="grocery-qty">1.5 kg</span></div>
+            <div class="grocery-row">Coconut Milk (canned) <span class="grocery-qty">2 cans</span></div>
+            <div class="grocery-row">Low-fat Milk <span class="grocery-qty">1 L</span></div>
+            <div class="grocery-row">Greek Yoghurt (P) <span class="grocery-qty">200g</span></div>
+            <div class="grocery-row">Ghee <span class="grocery-qty">100g</span></div>
+          </div>
+        </div>
+        <div class="grocery-cat">
+          <div class="grocery-cat-title fruits">Fruits</div>
+          <div class="grocery-items">
+            <div class="grocery-row">Bananas <span class="grocery-qty">5–6</span></div>
+            <div class="grocery-row">Avocados <span class="grocery-qty">3</span></div>
+            <div class="grocery-row">Pomegranate <span class="grocery-qty">1</span></div>
+            <div class="grocery-row">Medjool Dates <span class="grocery-qty">200g</span></div>
+            <div class="grocery-row">Lemon <span class="grocery-qty">6</span></div>
+            <div class="grocery-row">Mixed Berries (frozen) <span class="grocery-qty">200g</span></div>
+          </div>
+        </div>
+        <div class="grocery-cat">
+          <div class="grocery-cat-title pantry">Pantry & Condiments</div>
+          <div class="grocery-items">
+            <div class="grocery-row">Chia Seeds <span class="grocery-qty">100g</span></div>
+            <div class="grocery-row">Flaxseed <span class="grocery-qty">100g</span></div>
+            <div class="grocery-row">Almond Butter <span class="grocery-qty">1 jar</span></div>
+            <div class="grocery-row">Desiccated Coconut <span class="grocery-qty">100g</span></div>
+            <div class="grocery-row">Pumpkin Seeds <span class="grocery-qty">50g</span></div>
+            <div class="grocery-row">Soy Sauce (low-sodium) <span class="grocery-qty">1 bottle</span></div>
+            <div class="grocery-row">Sesame Oil <span class="grocery-qty">small bottle</span></div>
+            <div class="grocery-row">Nutritional Yeast <span class="grocery-qty">50g</span></div>
+            <div class="grocery-row">Unsweetened Cocoa Powder <span class="grocery-qty">50g</span></div>
+            <div class="grocery-row">Chaat Masala <span class="grocery-qty">1 pack</span></div>
+            <div class="grocery-row">Whole Spices + Masalas <span class="grocery-qty">as needed</span></div>
+            <div class="grocery-row">Curry Leaves + Mustard Seeds <span class="grocery-qty">stock up</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nutrition-box">
+        <div class="nutrition-box-title">Estimated Daily Nutrition Summary</div>
+        <div class="nutrition-cols">
+          <div class="nutrition-col vn">
+            <h4>V · Vegetarian · 84 → 75 kg</h4>
+            <div class="nutrition-row-item"><span>Avg. Daily Calories</span><strong>1,700–1,780 kcal</strong></div>
+            <div class="nutrition-row-item"><span>Avg. Protein</span><strong>~115–130g / day</strong></div>
+            <div class="nutrition-row-item"><span>Avg. Dietary Fibre</span><strong>~38–42g / day</strong></div>
+            <div class="nutrition-row-item"><span>Avg. Carbohydrates</span><strong>~190–210g (complex)</strong></div>
+            <div class="nutrition-row-item"><span>Avg. Healthy Fats</span><strong>~50–55g</strong></div>
+            <div class="nutrition-row-item"><span>Daily Caloric Deficit</span><strong>~500–600 kcal</strong></div>
+          </div>
+          <div class="nutrition-col pn">
+            <h4>P · Non-Veg · 69 → 62 kg</h4>
+            <div class="nutrition-row-item"><span>Avg. Daily Calories</span><strong>1,500–1,580 kcal</strong></div>
+            <div class="nutrition-row-item"><span>Avg. Protein</span><strong>~100–115g / day</strong></div>
+            <div class="nutrition-row-item"><span>Avg. Dietary Fibre</span><strong>~32–36g / day</strong></div>
+            <div class="nutrition-row-item"><span>Avg. Carbohydrates</span><strong>~160–180g (complex)</strong></div>
+            <div class="nutrition-row-item"><span>Avg. Healthy Fats</span><strong>~42–48g</strong></div>
+            <div class="nutrition-row-item"><span>Daily Caloric Deficit</span><strong>~450–550 kcal</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== WEEK AT A GLANCE ===== -->
+    <div class="panel" id="glance">
+      <div class="day-hero">
+        <div class="day-hero-left">
+          <div class="day-eyebrow">Plan A — Week 1</div>
+          <h1 class="day-title">Week at a <em>Glance.</em></h1>
+          <div class="day-subtitle">Click any row to jump to that day's full detail</div>
+        </div>
+      </div>
+      <div class="glance-table-wrap">
+        <table class="glance-table">
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th class="col-b">☀ Breakfast</th>
+              <th class="col-l">🌿 Lunch</th>
+              <th class="col-d">🌙 Dinner</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr onclick="jumpToDay('day1')">
+              <td class="glance-day-cell">
+                <span class="glance-day-num">01</span>
+                <span class="glance-day-name">Monday</span>
+              </td>
+              <td>
+                <div class="glance-meal-name">Ragi Dosa with Sambar & Coconut Chutney</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 3 dosas · Sambar · Chutney</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> 2 dosas · Sambar · 2 Boiled Eggs</div>
+              </td>
+              <td>
+                <div class="glance-meal-name">Brown Rice + Rajma Masala + Salad</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> ¾ cup rice · 1 cup rajma</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> ½ cup rice · ¾ cup rajma · Grilled Chicken</div>
+              </td>
+              <td>
+                <div class="glance-meal-name">Multigrain Roti + Leftover Rajma + Cucumber Raita</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 2 rotis · ½ cup rajma</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> 1.5 rotis · ⅓ cup rajma</div>
+                <span class="glance-time">⏱ 15 min</span>
+              </td>
+            </tr>
+            <tr onclick="jumpToDay('day2')">
+              <td class="glance-day-cell">
+                <span class="glance-day-num">02</span>
+                <span class="glance-day-name">Tuesday</span>
+              </td>
+              <td>
+                <div class="glance-meal-name">Moong Dal Chilla with Paneer / Egg-White Filling</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 3 chillas · Paneer filling</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> 2 chillas · 3 Egg whites inside</div>
+              </td>
+              <td>
+                <div class="glance-meal-name">Brown Rice (V) / Quinoa (P) + Dal Tadka + Methi Stir-fry</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> Brown rice · Dal tadka</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> Quinoa · Dal tadka · Pan-seared Fish</div>
+              </td>
+              <td>
+                <div class="glance-meal-name">Avocado Toast on Whole Wheat + Mixed Sprouts Salad</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 2 slices · ½ avocado · Sprouts</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> 1 slice · ½ avocado · Poached Egg</div>
+                <span class="glance-time">⏱ 12 min</span>
+              </td>
+            </tr>
+            <tr onclick="jumpToDay('day3')">
+              <td class="glance-day-cell">
+                <span class="glance-day-num">03</span>
+                <span class="glance-day-name">Wednesday</span>
+              </td>
+              <td>
+                <div class="glance-meal-name">Idiyappam with Vegetable Stew / Egg Curry</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 3 idiyappam · Veg stew · Peanuts</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> 2 idiyappam · Egg curry (2 eggs)</div>
+              </td>
+              <td>
+                <div class="glance-meal-name">Quinoa Khichdi with Moong Dal + Vegetable Raita</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 1.5 cups khichdi · Raita</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> 1 cup khichdi · Shredded Chicken</div>
+              </td>
+              <td>
+                <div class="glance-meal-name">Roasted Pumpkin Soup + Whole Wheat Toast</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 1.5 cups soup · 1 toast · Seeds</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> 1.5 cups soup · 1 toast · 2 Eggs</div>
+                <span class="glance-time">⏱ 15 min</span>
+              </td>
+            </tr>
+            <tr onclick="jumpToDay('day4')">
+              <td class="glance-day-cell">
+                <span class="glance-day-num">04</span>
+                <span class="glance-day-name">Thursday</span>
+              </td>
+              <td>
+                <div class="glance-meal-name">Besan Chilla with Spinach Filling & Curd</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 3 chillas · Spinach filling · Curd</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> 2 chillas · Spinach · Scrambled Egg</div>
+              </td>
+              <td>
+                <div class="glance-meal-name">Multigrain Roti + Palak Dal + Snake Gourd Sabzi</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 3 rotis · Palak dal · Snake gourd</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> 2 rotis · Palak dal · Tandoori Chicken</div>
+              </td>
+              <td>
+                <div class="glance-meal-name">Millet Noodles Stir-fry with Seasonal Vegetables</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 80g noodles · 1.5 cups stir-fry veg</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> 60g noodles · Prawns / Chicken strips</div>
+                <span class="glance-time">⏱ 15 min</span>
+              </td>
+            </tr>
+            <tr onclick="jumpToDay('day5')">
+              <td class="glance-day-cell">
+                <span class="glance-day-num">05</span>
+                <span class="glance-day-name">Friday</span>
+              </td>
+              <td>
+                <div class="glance-meal-name">Oats Upma with Mixed Vegetables</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 1 cup oats upma · Peas + carrots</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> ¾ cup oats upma · 2 Boiled Eggs</div>
+              </td>
+              <td>
+                <div class="glance-meal-name">Sambar Rice + Beetroot Poriyal + Roasted Papad</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> ¾ cup rice · Sambar · Poriyal</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> ½ cup rice · Sambar · Prawn / Fish curry</div>
+              </td>
+              <td>
+                <div class="glance-meal-name">Whole Wheat Pasta — Roasted Tomato Sauce + Veg</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 60g pasta · Tomato sauce · Roasted veg</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> 50g pasta · Grilled Chicken strips</div>
+                <span class="glance-time">⏱ 20 min</span>
+              </td>
+            </tr>
+            <tr onclick="jumpToDay('day6')">
+              <td class="glance-day-cell">
+                <span class="glance-day-num">06</span>
+                <span class="glance-day-name">Saturday</span>
+              </td>
+              <td>
+                <div class="glance-meal-name">Paneer Bhurji / Egg Bhurji on Whole Wheat Toast</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> Paneer bhurji · 2 slices toast</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> Egg bhurji (3 eggs) · 1 slice toast</div>
+              </td>
+              <td>
+                <div class="glance-meal-name">Chana Masala + Jeera Brown Rice + Kachumber</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 1 cup chana · ¾ cup rice · Salad</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> ¾ cup chana · ½ cup rice · Chicken Tikka</div>
+              </td>
+              <td>
+                <div class="glance-meal-name">Homemade Tomato Soup + Chana Wrap in Multigrain Roti</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> Soup · 1.5 rotis · Chana + cabbage wrap</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> Soup · 1 roti · Chana + chicken wrap</div>
+                <span class="glance-time">⏱ 15 min</span>
+              </td>
+            </tr>
+            <tr onclick="jumpToDay('day7')">
+              <td class="glance-day-cell">
+                <span class="glance-day-num">07</span>
+                <span class="glance-day-name">Sunday</span>
+              </td>
+              <td>
+                <div class="glance-meal-name">Overnight Oats with Banana, Chia Seeds & Nuts</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> ½ cup oats · Milk · Banana · Almonds</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> ⅓ cup oats · Greek yoghurt · Berries</div>
+                <span class="glance-time">No cook</span>
+              </td>
+              <td>
+                <div class="glance-meal-name">Mixed Dal + Bajra Roti + Snake Gourd / Green Beans</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 1 cup mixed dal · 2 bajra rotis</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> ¾ cup dal · 1.5 rotis · Mutton Keema</div>
+              </td>
+              <td>
+                <div class="glance-meal-name">Creamy Broccoli Soup + Multigrain Roti / WW Bread</div>
+                <div class="glance-person-line"><span class="glance-v">V</span> 1.5 cups soup · 1.5 rotis · Seeds</div>
+                <div class="glance-person-line"><span class="glance-p">P</span> 1.5 cups soup · 1 bread slice · 2 Eggs</div>
+                <span class="glance-time">⏱ 15 min</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== PREP CHECKLIST ===== -->
+    <div class="panel" id="prep">
+      <div class="day-hero">
+        <div class="day-hero-left">
+          <div class="day-eyebrow">Every Sunday</div>
+          <h1 class="day-title">Prep <em>Checklist.</em></h1>
+          <div class="day-subtitle">~90 minutes on Sunday saves you every single evening</div>
+        </div>
+      </div>
+      <div class="prep-panel-box">
+        <ul class="prep-list">
+          <li><span class="prep-arrow">→</span><div><strong>Soak Rajma overnight</strong> — needed for Monday lunch</div></li>
+          <li><span class="prep-arrow">→</span><div><strong>Soak Kabuli Chana overnight</strong> — needed for Saturday lunch</div></li>
+          <li><span class="prep-arrow">→</span><div><strong>Soak Moong Dal</strong> for chilla batter — needed for Tuesday breakfast</div></li>
+          <li><span class="prep-arrow">→</span><div><strong>Grind Ragi dosa batter</strong> + store in fridge — needed for Monday breakfast</div></li>
+          <li><span class="prep-arrow">→</span><div><strong>Sprout moong</strong> — for the snack chaat through the week</div></li>
+          <li><span class="prep-arrow">→</span><div><strong>Boil 8–10 eggs</strong> (P's weekly supply — quick add to any meal)</div></li>
+          <li><span class="prep-arrow">→</span><div><strong>Grill 400g chicken breast (P)</strong> — slice and refrigerate, covers 3 days of dinner add-ons</div></li>
+          <li><span class="prep-arrow">→</span><div><strong>Batch roast makhana</strong> (200g) — snack for the full week</div></li>
+          <li><span class="prep-arrow">→</span><div><strong>Roll Date & Nut Energy Balls</strong> (15 nos) — sweet fix for the week</div></li>
+          <li><span class="prep-arrow">→</span><div><strong>Pre-chop vegetables:</strong> capsicum, onion, carrot, cabbage — store in airtight containers</div></li>
+          <li><span class="prep-arrow">→</span><div><strong>Cook a batch of brown rice</strong> — covers Monday + Friday + Saturday lunches</div></li>
+          <li><span class="prep-arrow">→</span><div><strong>Set overnight oats jars</strong> — Saturday night, ready for Sunday breakfast</div></li>
+          <li><span class="prep-arrow">→</span><div><strong>Optional: batch pumpkin soup</strong> — Wednesday dinner, doubles as Thursday backup</div></li>
+        </ul>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  function showPanel(id, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.day-nav-btn, .sidebar-extra-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+
+  function jumpToDay(id) {
+    // Find the matching day-nav-btn and activate it
+    const btns = document.querySelectorAll('.day-nav-btn');
+    const dayMap = { day1: 0, day2: 1, day3: 2, day4: 3, day5: 4, day6: 5, day7: 6 };
+    const btn = btns[dayMap[id]];
+    showPanel(id, btn);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function switchPlan(val) {
+    // Placeholder for future plans
+    if (val !== 'A') {
+      alert('Plan ' + val + ' is coming soon — we\'ll add it once Week 1 is locked in!');
+      document.querySelector('.plan-selector').value = 'A';
+    }
+  }
+</script>
+</body>
+</html>
